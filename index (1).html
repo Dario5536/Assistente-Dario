@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dario Acquafredda | Inizia a Investire</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --navy: #0a1628; --navy-mid: #112040; --navy-light: #1a3060;
+    --gold: #c9a84c; --gold-light: #e8c97a; --cream: #f5f0e8;
+    --cream-dark: #ede5d5; --text-light: #8a9bb5; --green: #2ecc8f;
+    --green-dark: #25a876;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--cream); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+
+  /* HEADER */
+  .header { width: 100%; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(201,168,76,0.15); background: rgba(10,22,40,0.97); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--navy); flex-shrink: 0; }
+  .logo-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--cream); font-weight: 600; }
+  .logo-role { font-size: 0.65rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+  .online-badge { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--green); }
+  .online-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  /* MAIN */
+  .main { width: 100%; max-width: 860px; padding: 32px 20px 48px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, var(--navy-mid), var(--navy-light)); border: 1px solid rgba(201,168,76,0.2); border-radius: 20px; padding: 32px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%); border-radius: 50%; }
+  .hero-tag { display: inline-flex; align-items: center; gap: 7px; background: rgba(46,204,143,0.1); border: 1px solid rgba(46,204,143,0.25); border-radius: 50px; padding: 4px 14px; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); font-weight: 600; margin-bottom: 14px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: var(--cream); margin-bottom: 10px; line-height: 1.3; }
+  .hero-desc { font-size: 0.9rem; color: var(--text-light); line-height: 1.7; max-width: 540px; margin-bottom: 20px; }
+  .quick-topics { display: flex; flex-wrap: wrap; gap: 8px; }
+  .topic-chip { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.18); border-radius: 50px; padding: 7px 16px; font-size: 0.77rem; color: var(--cream-dark); cursor: pointer; transition: all 0.2s ease; }
+  .topic-chip:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold-light); transform: translateY(-1px); }
+
+  /* PAC SIMULATOR */
+  .simulator { background: var(--navy-mid); border: 1px solid rgba(201,168,76,0.15); border-radius: 20px; overflow: hidden; }
+  .sim-header { padding: 20px 26px 0; display: flex; align-items: center; gap: 10px; }
+  .sim-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .sim-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--cream); font-weight: 600; }
+  .sim-subtitle { font-size: 0.75rem; color: var(--text-light); }
+  .sim-body { padding: 20px 26px; }
+  .sim-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .sim-control label { display: block; font-size: 0.72rem; color: var(--text-light); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+  .sim-control input[type="range"] { width: 100%; accent-color: var(--gold); cursor: pointer; }
+  .sim-control .value { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--gold-light); font-weight: 600; margin-top: 4px; }
+  .sim-result { background: linear-gradient(135deg, rgba(46,204,143,0.08), rgba(46,204,143,0.04)); border: 1px solid rgba(46,204,143,0.2); border-radius: 14px; padding: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .sim-stat { text-align: center; }
+  .sim-stat-label { font-size: 0.68rem; color: var(--text-light); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .sim-stat-value { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--green); font-weight: 700; }
+  .sim-stat-value.gold { color: var(--gold-light); }
+  .sim-note { font-size: 0.72rem; color: var(--text-light); text-align: center; line-height: 1.5; }
+
+  /* CHART */
+  .chart-wrap { position: relative; height: 140px; margin-bottom: 16px; }
+  canvas#pacChart { width: 100% !important; height: 140px !important; }
+
+  /* CHAT */
+  .chat-area { background: var(--navy-mid); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+  .chat-header { padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; }
+  .chat-header-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 12px; font-weight: 700; color: var(--navy); }
+  .chat-header-text { font-size: 0.85rem; color: var(--cream); font-weight: 500; }
+  .chat-header-sub { font-size: 0.7rem; color: var(--text-light); }
+  .messages { padding: 22px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: 400px; scroll-behavior: smooth; }
+  .message { display: flex; gap: 10px; animation: fadeUp 0.35s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .message.user { flex-direction: row-reverse; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .avatar.ai { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; }
+  .avatar.user { background: var(--navy-light); color: var(--cream); font-size: 10px; font-weight: 600; }
+  .bubble { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 0.875rem; line-height: 1.65; }
+  .bubble.ai { background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.07); color: var(--cream); border-radius: 4px 16px 16px 16px; }
+  .bubble.user { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--navy); font-weight: 500; border-radius: 16px 4px 16px 16px; }
+  .bubble.escalate { background: rgba(46,204,143,0.07); border: 1px solid rgba(46,204,143,0.22); color: var(--cream); border-radius: 4px 16px 16px 16px; }
+  .escalate-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(46,204,143,0.13); border: 1px solid rgba(46,204,143,0.28); border-radius: 50px; padding: 3px 10px; font-size: 0.65rem; color: var(--green); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .typing { display: flex; gap: 5px; align-items: center; padding: 2px 0; }
+  .dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: bounce 1.2s infinite; opacity: 0.7; }
+  .dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+  .input-area { padding: 16px 22px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: flex-end; background: rgba(10,22,40,0.5); }
+  textarea { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 11px 15px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; resize: none; outline: none; transition: border-color 0.2s; line-height: 1.5; max-height: 100px; }
+  textarea:focus { border-color: rgba(201,168,76,0.4); }
+  textarea::placeholder { color: var(--text-light); font-size: 0.83rem; }
+  .send-btn { width: 42px; height: 42px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; flex-shrink: 0; color: var(--navy); font-size: 16px; }
+  .send-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(201,168,76,0.3); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* CONTACT FORM */
+  .contact-form { background: rgba(46,204,143,0.05); border: 1px solid rgba(46,204,143,0.18); border-radius: 14px; padding: 18px; margin-top: 6px; animation: fadeUp 0.3s ease; }
+  .contact-form-title { font-size: 0.73rem; color: var(--green); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+  .contact-form input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; padding: 10px 14px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; outline: none; margin-bottom: 8px; transition: border-color 0.2s; }
+  .contact-form input:focus { border-color: rgba(46,204,143,0.35); }
+  .contact-form input::placeholder { color: var(--text-light); }
+  .contact-submit { background: linear-gradient(135deg, var(--green), var(--green-dark)); border: none; border-radius: 10px; padding: 12px 20px; color: var(--navy); font-family: 'DM Sans', sans-serif; font-size: 0.84rem; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s ease; }
+  .contact-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .disclaimer { text-align: center; font-size: 0.67rem; color: var(--text-light); line-height: 1.5; opacity: 0.6; }
+
+  @media (max-width: 600px) {
+    .header { padding: 14px 18px; }
+    .online-badge { display: none; }
+    .sim-controls { grid-template-columns: 1fr; }
+    .sim-result { grid-template-columns: 1fr 1fr; }
+    .hero-title { font-size: 1.35rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-avatar">DA</div>
+    <div>
+      <div class="logo-name">Dario Acquafredda</div>
+      <div class="logo-role">Consulente Finanziario · Finanza Comportamentale</div>
+    </div>
+  </div>
+  <div class="online-badge"><div class="online-dot"></div>Assistente AI attivo</div>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">🌱 Inizia il tuo percorso</div>
+    <div class="hero-title">Scopri il potere di investire,<br>anche partendo da poco.</div>
+    <div class="hero-desc">Sono l'assistente AI di Dario Acquafredda. Sono qui per aiutarti a capire perché investire è importante, sfatare le paure più comuni e mostrarti cosa può fare il tempo per i tuoi risparmi. Nessuna domanda è troppo semplice.</div>
+    <div class="quick-topics">
+      <div class="topic-chip" onclick="sendQuick('Perché dovrei investire se ho pochi risparmi?')">💰 Ho pochi risparmi</div>
+      <div class="topic-chip" onclick="sendQuick('Ho paura di perdere i miei soldi investendo')">😟 Ho paura di perdere</div>
+      <div class="topic-chip" onclick="sendQuick('Cos\'è un PAC e come funziona?')">📅 Cos'è un PAC?</div>
+      <div class="topic-chip" onclick="sendQuick('Perché il fondo pensione conviene iniziare giovani?')">🏖️ Fondo pensione</div>
+      <div class="topic-chip" onclick="sendQuick('Cosa succede ai miei risparmi fermi in banca?')">🏦 Risparmi in banca</div>
+    </div>
+  </div>
+
+  <!-- PAC SIMULATOR -->
+  <div class="simulator">
+    <div class="sim-header">
+      <div class="sim-icon">📈</div>
+      <div>
+        <div class="sim-title">Simulatore PAC</div>
+        <div class="sim-subtitle">Quanto può crescere un investimento mensile nel tempo?</div>
+      </div>
+    </div>
+    <div class="sim-body">
+      <div class="sim-controls">
+        <div class="sim-control">
+          <label>Versamento mensile</label>
+          <input type="range" id="monthly" min="50" max="1000" step="50" value="200" oninput="updateSim()">
+          <div class="value" id="monthly-val">€200/mese</div>
+        </div>
+        <div class="sim-control">
+          <label>Durata investimento</label>
+          <input type="range" id="years" min="5" max="40" step="1" value="20" oninput="updateSim()">
+          <div class="value" id="years-val">20 anni</div>
+        </div>
+        <div class="sim-control">
+          <label>Rendimento annuo stimato</label>
+          <input type="range" id="rate" min="2" max="10" step="0.5" value="6" oninput="updateSim()">
+          <div class="value" id="rate-val">6% annuo</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="pacChart"></canvas>
+      </div>
+      <div class="sim-result">
+        <div class="sim-stat">
+          <div class="sim-stat-label">Capitale investito</div>
+          <div class="sim-stat-value gold" id="invested">€48.000</div>
+        </div>
+        <div class="sim-stat">
+          <div class="sim-stat-label">Rendimento generato</div>
+          <div class="sim-stat-value" id="gains">€44.143</div>
+        </div>
+        <div class="sim-stat">
+          <div class="sim-stat-label">Valore finale</div>
+          <div class="sim-stat-value" id="total">€92.143</div>
+        </div>
+      </div>
+      <div class="sim-note">* Simulazione a scopo educativo. I rendimenti passati non garantiscono quelli futuri. Il rendimento medio storico dell'indice S&P 500 negli ultimi 30 anni è stato circa 10% annuo lordo.</div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <div class="chat-header-icon">DA</div>
+      <div>
+        <div class="chat-header-text">Hai domande? Chiedimi tutto.</div>
+        <div class="chat-header-sub">Rispondo subito · Nessun impegno</div>
+      </div>
+    </div>
+    <div class="messages" id="messages">
+      <div class="message">
+        <div class="avatar ai">DA</div>
+        <div class="bubble ai">Ciao! Sono l'assistente AI di Dario Acquafredda. Sono qui per aiutarti a capire il mondo degli investimenti — senza tecnicismi, senza giudizi. Hai già provato il simulatore PAC qui sopra? Puoi anche farmi qualsiasi domanda da dove vuoi partire. 😊</div>
+      </div>
+    </div>
+    <div class="input-area">
+      <textarea id="input" placeholder="Scrivi la tua domanda..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <div class="disclaimer">⚠️ Le informazioni fornite hanno scopo educativo e informativo. Non costituiscono consulenza finanziaria personalizzata.<br>Per un piano su misura contatta Dario Acquafredda direttamente.</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+  let isLoading = false;
+  let conversationHistory = [];
+  let formShown = false;
+  let messageCount = 0;
+  let pacChart = null;
+
+  const SYSTEM_PROMPT = `Sei l'assistente AI di Dario Acquafredda, consulente finanziario specializzato in finanza comportamentale, PAC, fondi pensione e pianificazione patrimoniale per giovani e persone che si avvicinano agli investimenti.
+
+Il tuo ruolo è esclusivamente quello di ACQUISIRE NUOVI CLIENTI educandoli sull'importanza di investire:
+1. Spiegare in modo semplice e motivante perché è importante investire, anche con piccole somme
+2. Educare su: inflazione, potere del tempo, interesse composto, PAC, diversificazione, fondi pensione
+3. Sfatare miti e paure comuni: "devo avere tanti soldi", "è troppo rischioso", "aspetto il momento giusto", "tengo tutto in banca"
+4. Usare la finanza comportamentale per spiegare i bias che frenano le persone (bias dello status quo, avversione alle perdite, procrastinazione)
+5. Quando la persona mostra interesse concreto o chiede come iniziare o vuole parlare con Dario, inizia la risposta con [ESCALATE]
+
+SUL TEMA COSTI/ETF VS FONDI: Se qualcuno chiede dei costi, delle commissioni, o fa confronti tra ETF e fondi attivi, NON entrare nel merito. Rispondi che è un tema che dipende molto dalla situazione personale e che Dario può aiutare a trovare la soluzione più adatta. Il messaggio centrale è sempre: la cosa più importante è iniziare a investire. Il "come" si definisce insieme.
+
+SIMULATORE PAC: Se qualcuno ha usato il simulatore o fa domande sui numeri, puoi commentare i risultati e spiegare il potere dell'interesse composto in modo entusiasmante.
+
+Tono: amichevole, motivante, empatico, mai tecnico o intimidatorio. Usa analogie quotidiane. Rispondi in italiano. Risposte concise (2-3 paragrafi max). Usa qualche emoji con moderazione.`;
+
+  // PAC SIMULATOR
+  function formatEuro(n) {
+    return '€' + Math.round(n).toLocaleString('it-IT');
+  }
+
+  function calcPAC(monthly, years, rate) {
+    const r = rate / 100 / 12;
+    const n = years * 12;
+    const fv = monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+    const invested = monthly * n;
+    return { fv, invested, gains: fv - invested };
+  }
+
+  function updateSim() {
+    const monthly = parseInt(document.getElementById('monthly').value);
+    const years = parseInt(document.getElementById('years').value);
+    const rate = parseFloat(document.getElementById('rate').value);
+
+    document.getElementById('monthly-val').textContent = '€' + monthly + '/mese';
+    document.getElementById('years-val').textContent = years + ' anni';
+    document.getElementById('rate-val').textContent = rate + '% annuo';
+
+    const { fv, invested, gains } = calcPAC(monthly, years, rate);
+
+    document.getElementById('invested').textContent = formatEuro(invested);
+    document.getElementById('gains').textContent = formatEuro(gains);
+    document.getElementById('total').textContent = formatEuro(fv);
+
+    // Build chart data
+    const labels = [];
+    const investedData = [];
+    const totalData = [];
+    for (let y = 1; y <= years; y++) {
+      labels.push('Anno ' + y);
+      const res = calcPAC(monthly, y, rate);
+      investedData.push(Math.round(res.invested));
+      totalData.push(Math.round(res.fv));
+    }
+
+    if (pacChart) {
+      pacChart.data.labels = labels;
+      pacChart.data.datasets[0].data = investedData;
+      pacChart.data.datasets[1].data = totalData;
+      pacChart.update();
+    } else {
+      const ctx = document.getElementById('pacChart').getContext('2d');
+      pacChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Capitale investito',
+              data: investedData,
+              borderColor: 'rgba(201,168,76,0.7)',
+              backgroundColor: 'rgba(201,168,76,0.08)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 0,
+              borderWidth: 2
+            },
+            {
+              label: 'Valore totale',
+              data: totalData,
+              borderColor: 'rgba(46,204,143,0.9)',
+              backgroundColor: 'rgba(46,204,143,0.1)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 0,
+              borderWidth: 2.5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: 'rgba(245,240,232,0.6)', font: { size: 11 }, boxWidth: 12 }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => ' ' + formatEuro(ctx.raw)
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: 'rgba(138,155,181,0.7)', font: { size: 10 }, maxTicksLimit: 8 },
+              grid: { color: 'rgba(255,255,255,0.04)' }
+            },
+            y: {
+              ticks: {
+                color: 'rgba(138,155,181,0.7)',
+                font: { size: 10 },
+                callback: v => '€' + (v >= 1000 ? Math.round(v/1000) + 'k' : v)
+              },
+              grid: { color: 'rgba(255,255,255,0.04)' }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // Initialize simulator
+  updateSim();
+
+  // CHAT
+  function sendQuick(text) { document.getElementById('input').value = text; sendMessage(); }
+  function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+  function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 100) + 'px'; }
+
+  function addMessage(role, content, isEscalate = false) {
+    const messages = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = `message ${role === 'user' ? 'user' : ''}`;
+    const avatarLabel = role === 'user' ? 'TU' : 'DA';
+    const avatarClass = role === 'user' ? 'user' : 'ai';
+    const bubbleClass = isEscalate ? 'escalate' : role === 'user' ? 'user' : 'ai';
+    let bubbleContent = isEscalate ? `<div class="escalate-tag">✉ Parla con Dario</div>${content}` : content;
+    div.innerHTML = `<div class="avatar ${avatarClass}">${avatarLabel}</div><div class="bubble ${bubbleClass}">${bubbleContent}</div>`;
+    messages.appendChild(div);
+    if (isEscalate && !formShown) {
+      formShown = true;
+      const formDiv = document.createElement('div');
+      formDiv.className = 'contact-form';
+      formDiv.innerHTML = `
+        <div class="contact-form-title">📬 Lascia i tuoi contatti — Dario ti richiamerà gratuitamente</div>
+        <input type="text" placeholder="Il tuo nome e cognome" id="cf-name" />
+        <input type="tel" placeholder="Il tuo numero di telefono" id="cf-phone" />
+        <button class="contact-submit" onclick="submitContact()">Inizia il tuo percorso con Dario — è gratuito →</button>`;
+      messages.appendChild(formDiv);
+    }
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function addTyping() {
+    const messages = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.id = 'typing-indicator'; div.className = 'message';
+    div.innerHTML = `<div class="avatar ai">DA</div><div class="bubble ai"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeTyping() { const t = document.getElementById('typing-indicator'); if (t) t.remove(); }
+
+  async function submitContact() {
+    const name = document.getElementById('cf-name')?.value?.trim();
+    const phone = document.getElementById('cf-phone')?.value?.trim();
+    if (!name || !phone) { alert('Per favore inserisci nome e numero di telefono.'); return; }
+    const now = new Date().toLocaleString('it-IT');
+    try {
+      await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'contact', name, phone, mode: 'prospect', timestamp: now, messageCount })
+      });
+    } catch(e) { console.log('Email error', e); }
+    document.querySelectorAll('.contact-form').forEach(f => {
+      f.innerHTML = `<div style="text-align:center; padding:12px 0;"><div style="font-size:1.6rem; margin-bottom:8px;">✅</div><div style="color:var(--green); font-weight:600; font-size:0.9rem; margin-bottom:4px;">Perfetto ${name}!</div><div style="color:var(--text-light); font-size:0.78rem; line-height:1.5;">Dario ti contatterà presto al numero indicato.<br>Il tuo percorso verso una vita finanziaria migliore inizia adesso.</div></div>`;
+    });
+  }
+
+  async function sendMessage() {
+    if (isLoading) return;
+    const input = document.getElementById('input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = ''; input.style.height = 'auto';
+    isLoading = true; document.getElementById('send-btn').disabled = true;
+    messageCount++;
+    addMessage('user', text);
+    conversationHistory.push({ role: 'user', content: text });
+    addTyping();
+    try {
+      const response = await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYSTEM_PROMPT, messages: conversationHistory })
+      });
+      const data = await response.json();
+      const reply = data.content?.[0]?.text || 'Mi dispiace, si è verificato un errore. Riprova.';
+      removeTyping();
+      const isEscalate = reply.startsWith('[ESCALATE]');
+      const cleanReply = reply.replace('[ESCALATE]', '').trim();
+      conversationHistory.push({ role: 'assistant', content: reply });
+      addMessage('assistant', cleanReply, isEscalate);
+    } catch (err) {
+      removeTyping();
+      addMessage('assistant', 'Si è verificato un errore di connessione. Riprova tra qualche istante.');
+    }
+    isLoading = false; document.getElementById('send-btn').disabled = false; input.focus();
+  }
+</script>
+</body>
+</html>
