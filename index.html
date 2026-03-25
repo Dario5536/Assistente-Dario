@@ -48,8 +48,7 @@
   .escalate-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(46,204,143,0.13); border: 1px solid rgba(46,204,143,0.28); border-radius: 50px; padding: 3px 10px; font-size: 0.67rem; color: var(--green); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
   .typing { display: flex; gap: 5px; align-items: center; padding: 4px 0; }
   .dot { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; animation: bounce 1.2s infinite; opacity: 0.7; }
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
+  .dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.7; } 30% { transform: translateY(-6px); opacity: 1; } }
   .input-area { padding: 18px 26px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 11px; align-items: flex-end; background: rgba(10,22,40,0.5); }
   textarea { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 13px; padding: 12px 16px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; resize: none; outline: none; transition: border-color 0.2s; line-height: 1.5; max-height: 120px; }
@@ -117,28 +116,38 @@
   let isLoading = false;
   let conversationHistory = [];
   let formShown = false;
-  const WHATSAPP_NUMBER = '393272243207';
+  let sessionStart = new Date().toLocaleString('it-IT');
+  let messageCount = 0;
 
   const SYSTEM_PROMPTS = {
     client: `Sei l'assistente AI di Dario Acquafredda, consulente finanziario specializzato in finanza comportamentale, PAC, fondi pensione e pianificazione patrimoniale per clienti giovani.
+
 Il tuo ruolo:
 1. Rispondere a domande sui mercati finanziari, economia macro, tassi, geopolitica e investimenti in modo chiaro
 2. Spiegare concetti di finanza comportamentale (bias cognitivi, gestione emotiva, disciplina del PAC)
 3. Rassicurare i clienti durante momenti di volatilità con dati e ragionamenti solidi
 4. Per domande PERSONALI sul portafoglio specifico, inizia la risposta con [ESCALATE]
+
+IMPORTANTE sul tema costi/ETF vs fondi: Se qualcuno ti chiede dei costi degli investimenti, delle commissioni, o fa confronti tra ETF e fondi attivi, NON entrare nel merito della questione. Rispondi dicendo che è un tema importante che merita una conversazione approfondita con Dario, e reindirizza il focus sull'importanza di iniziare a investire e di avere un piano. Il messaggio centrale è sempre: investire è la cosa più importante, i dettagli tecnici si discutono con il consulente.
+
 Tono: professionale ma umano, rassicurante. Rispondi in italiano. Risposte concise (max 3-4 paragrafi).`,
+
     prospect: `Sei l'assistente AI di Dario Acquafredda, consulente finanziario specializzato nell'educazione finanziaria per persone che si avvicinano agli investimenti.
+
 Il tuo ruolo:
 1. Spiegare in modo semplice perché è importante investire, anche con piccole somme
 2. Educare su: inflazione, potere del tempo, PAC, diversificazione, fondi pensione
 3. Sfatare miti comuni sugli investimenti
 4. Usare la finanza comportamentale per spiegare i bias che frenano gli investimenti
 5. Quando il prospect mostra interesse concreto, inizia la risposta con [ESCALATE]
+
+IMPORTANTE sul tema costi/ETF vs fondi: Se qualcuno ti chiede dei costi degli investimenti, delle commissioni, o fa confronti tra ETF e fondi attivi, NON entrare nel merito. Rispondi che è un tema che dipende molto dalla situazione personale e che Dario può aiutare a trovare la soluzione più adatta. Reindirizza sempre il focus sul messaggio principale: la cosa più importante è iniziare a investire, anche con poco. Il "come" si definisce insieme a un consulente.
+
 Tono: amichevole, motivante, mai tecnico. Rispondi in italiano. Risposte concise.`
   };
 
   function setMode(mode) {
-    currentMode = mode; conversationHistory = []; formShown = false;
+    currentMode = mode; conversationHistory = []; formShown = false; messageCount = 0;
     document.getElementById('btn-client').classList.toggle('active', mode === 'client');
     document.getElementById('btn-prospect').classList.toggle('active', mode === 'prospect');
     if (mode === 'client') {
@@ -208,12 +217,28 @@ Tono: amichevole, motivante, mai tecnico. Rispondi in italiano. Risposte concise
 
   function removeTyping() { const t = document.getElementById('typing-indicator'); if (t) t.remove(); }
 
-  function submitContact() {
+  async function submitContact() {
     const name = document.getElementById('cf-name')?.value?.trim();
     const phone = document.getElementById('cf-phone')?.value?.trim();
     if (!name || !phone) { alert('Per favore inserisci nome e numero di telefono.'); return; }
-    const msg = encodeURIComponent(`🔔 Nuovo contatto dal chatbot!\n\n👤 Nome: ${name}\n📞 Telefono: ${phone}\n🕐 Modalità: ${currentMode === 'client' ? 'Cliente esistente' : 'Nuovo prospect'}\n\nHa richiesto una consulenza tramite il chatbot.`);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+
+    const now = new Date().toLocaleString('it-IT');
+
+    try {
+      await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'contact',
+          name,
+          phone,
+          mode: currentMode,
+          timestamp: now,
+          messageCount
+        })
+      });
+    } catch(e) { console.log('Email notification failed', e); }
+
     document.querySelectorAll('.contact-form').forEach(f => {
       f.innerHTML = `<div style="text-align:center; padding:10px 0;"><div style="font-size:1.4rem; margin-bottom:8px;">✅</div><div style="color:var(--green); font-weight:600; font-size:0.88rem; margin-bottom:4px;">Richiesta inviata!</div><div style="color:var(--text-light); font-size:0.78rem;">Dario ti contatterà presto al numero indicato.</div></div>`;
     });
@@ -226,6 +251,7 @@ Tono: amichevole, motivante, mai tecnico. Rispondi in italiano. Risposte concise
     if (!text) return;
     input.value = ''; input.style.height = 'auto';
     isLoading = true; document.getElementById('send-btn').disabled = true;
+    messageCount++;
     addMessage('user', text);
     conversationHistory.push({ role: 'user', content: text });
     addTyping();
