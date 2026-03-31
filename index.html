@@ -110,8 +110,9 @@
 
 <div class="main">
   <div class="tab-toggle">
-    <button class="tab-btn active" onclick="switchTab('chat')" id="btn-chat">💬 Chatta con me</button>
-    <button class="tab-btn" onclick="switchTab('sim')" id="btn-sim">📈 Simulatore PAC</button>
+    <button class="tab-btn active" onclick="switchTab('chat')" id="btn-chat">💬 Chatta</button>
+    <button class="tab-btn" onclick="switchTab('sim')" id="btn-sim">📈 PAC</button>
+    <button class="tab-btn" onclick="switchTab('pension')" id="btn-pension">🏖️ Pensione</button>
   </div>
 
   <!-- CHAT PANEL -->
@@ -140,7 +141,143 @@
         <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
       </div>
     </div>
-    <div class="disclaimer">⚠️ Le informazioni fornite hanno scopo educativo e informativo. Non costituiscono consulenza finanziaria personalizzata.<br>Per un piano su misura contatta Dario Acquafredda direttamente.</div>
+    <div class="disclaimer">⚠️ Le informazioni fornite hanno scopo educativo e informativo. Non costituiscono consulenza finanziaria personalizzata.<br>Per un piano su misura contatta Dario Acquafredda direttamente.<br>Titolare del trattamento dati: Dario Acquafredda — darioacquafredda@gmail.com — I dati raccolti (nome e telefono) sono conservati per max 12 mesi e non ceduti a terzi.</div>
+  </div>
+
+  <!-- PENSION SIMULATOR PANEL -->
+  <div class="panel" id="panel-pension">
+    <div class="sim-card">
+      <div class="sim-top">
+        <div class="sim-top-tag">🏖️ Simulatore Pensionistico</div>
+        <div class="sim-top-title">Quanto sarà la tua pensione?</div>
+        <div class="sim-top-desc">Inserisci i tuoi dati e scopri il gap previdenziale — quanto ti manca ogni mese rispetto al tuo stipendio attuale.</div>
+      </div>
+      <div class="sim-body">
+
+        <div class="sim-controls" style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;">
+          <div class="sim-control">
+            <label style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.72rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Età attuale</span><span class="val" id="p-age-val" style="font-size:1rem; color:var(--gold-light); font-weight:600; font-family:'Playfair Display',serif;">35 anni</span></label>
+            <input type="range" id="p-age" min="20" max="60" step="1" value="35" oninput="updatePension()" style="width:100%; accent-color:var(--gold); cursor:pointer;">
+          </div>
+          <div class="sim-control">
+            <label style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.72rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Anni contributi versati</span><span class="val" id="p-contrib-val" style="font-size:1rem; color:var(--gold-light); font-weight:600; font-family:'Playfair Display',serif;">10 anni</span></label>
+            <input type="range" id="p-contrib" min="0" max="40" step="1" value="10" oninput="updatePension()" style="width:100%; accent-color:var(--gold); cursor:pointer;">
+          </div>
+          <div class="sim-control">
+            <label style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.72rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Età pensionabile</span><span class="val" id="p-ret-val" style="font-size:1rem; color:var(--gold-light); font-weight:600; font-family:'Playfair Display',serif;">67 anni</span></label>
+            <input type="range" id="p-ret" min="60" max="72" step="1" value="67" oninput="updatePension()" style="width:100%; accent-color:var(--gold); cursor:pointer;">
+          </div>
+          <div class="sim-control">
+            <label style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="font-size:0.72rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Reddito annuo lordo</span><span class="val" id="p-income-val" style="font-size:1rem; color:var(--gold-light); font-weight:600; font-family:'Playfair Display',serif;">€30.000</span></label>
+            <input type="range" id="p-income" min="15000" max="100000" step="1000" value="30000" oninput="updatePension()" style="width:100%; accent-color:var(--gold); cursor:pointer;">
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px;" id="pension-results">
+          <div class="sim-stat">
+            <div class="sim-stat-label">Stipendio netto</div>
+            <div class="sim-stat-value gold" id="p-net">€1.750/mese</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">Pensione stimata</div>
+            <div class="sim-stat-value" id="p-pension" style="color:var(--gold-light);">€980/mese</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">Gap mensile</div>
+            <div class="sim-stat-value" id="p-gap" style="color:#e05c5c;">-€770/mese</div>
+          </div>
+        </div>
+
+        <!-- Gap bar -->
+        <div style="background:rgba(255,255,255,0.04); border-radius:12px; padding:16px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span style="font-size:0.72rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Tasso di sostituzione</span>
+            <span style="font-size:0.9rem; font-weight:600; color:var(--cream);" id="p-rate">56%</span>
+          </div>
+          <div style="height:8px; background:rgba(255,255,255,0.08); border-radius:8px; overflow:hidden;">
+            <div id="p-bar" style="height:100%; background:linear-gradient(90deg, #e05c5c, #e8c97a); border-radius:8px; transition:width 0.4s ease; width:56%;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-top:6px;">
+            <span style="font-size:0.65rem; color:#e05c5c;">Basso</span>
+            <span style="font-size:0.65rem; color:var(--text-light);">Sufficiente: 75%+</span>
+            <span style="font-size:0.65rem; color:var(--green);">Ottimo: 90%+</span>
+          </div>
+        </div>
+
+        <!-- PAC suggerito + slider interattivo -->
+        <div style="background:rgba(46,204,143,0.06); border:1px solid rgba(46,204,143,0.18); border-radius:13px; padding:16px; margin-bottom:14px;">
+          <div style="font-size:0.72rem; color:var(--green); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:10px;">💡 Quanto versare per colmare il gap?</div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+            <div class="sim-stat" style="background:rgba(255,255,255,0.04);">
+              <div class="sim-stat-label">Versamento suggerito</div>
+              <div class="sim-stat-value green" id="p-pac">€180/mese</div>
+            </div>
+            <div class="sim-stat" style="background:rgba(255,255,255,0.04);">
+              <div class="sim-stat-label">Anni disponibili</div>
+              <div class="sim-stat-value gold" id="p-years-left">32 anni</div>
+            </div>
+          </div>
+
+          <!-- Slider versamento -->
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:0.72rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em;">Simula il tuo versamento mensile</span>
+              <span style="font-size:1rem; color:var(--gold-light); font-weight:600; font-family:'Playfair Display',serif;" id="p-slider-val">€100/mese</span>
+            </div>
+            <input type="range" id="p-contribution-slider" min="0" max="500" step="10" value="100" oninput="updatePensionSlider()" style="width:100%; accent-color:var(--green); cursor:pointer;">
+          </div>
+
+          <!-- Gap residuo visivo -->
+          <div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:14px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+              <span style="font-size:0.7rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.04em;">Gap coperto dal fondo pensione</span>
+              <span style="font-size:0.88rem; font-weight:600;" id="p-covered-pct">32%</span>
+            </div>
+            <div style="height:10px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; margin-bottom:8px;">
+              <div id="p-covered-bar" style="height:100%; border-radius:10px; transition:width 0.4s ease, background 0.4s ease; width:32%; background:linear-gradient(90deg, var(--green), #25a876);"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px;">
+              <div style="text-align:center;">
+                <div style="font-size:0.62rem; color:var(--text-light); text-transform:uppercase; margin-bottom:3px;">Gap totale</div>
+                <div style="font-size:0.9rem; font-weight:600; color:#e05c5c;" id="p-gap-total">-€615/mese</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.62rem; color:var(--text-light); text-transform:uppercase; margin-bottom:3px;">Coperto da fondo</div>
+                <div style="font-size:0.9rem; font-weight:600; color:var(--green);" id="p-gap-covered">+€195/mese</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.62rem; color:var(--text-light); text-transform:uppercase; margin-bottom:3px;">Gap residuo</div>
+                <div style="font-size:0.9rem; font-weight:600;" id="p-gap-residual" style="color:#e05c5c;">-€420/mese</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:0.73rem; color:var(--text-light); line-height:1.6;" id="p-note">Il sistema contributivo italiano produce per i giovani di oggi un tasso di sostituzione reale del 50-65% — significa che la pensione coprirà meno di 2/3 del tuo ultimo stipendio. Prima inizi a costruire un piano integrativo, minore sarà lo sforzo mensile necessario.</div>
+        </div>
+
+        <!-- Note metodologica collassabile -->
+        <div style="margin-bottom:16px;">
+          <button onclick="toggleMethod()" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.18); border-radius:50px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; padding:6px 14px;">
+            <span style="font-size:0.72rem; color:var(--cream-dark); letter-spacing:0.03em;">ℹ️ Come calcoliamo questi numeri?</span>
+            <span id="method-arrow" style="font-size:0.65rem; color:var(--gold); transition:transform 0.3s;">▼</span>
+          </button>
+          <div id="method-box" style="display:none; margin-top:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:14px;">
+            <p style="font-size:0.75rem; color:var(--text-light); line-height:1.7; margin-bottom:8px;"><strong style="color:var(--cream);">Ultimo stipendio netto stimato</strong><br>Prendiamo il tuo reddito lordo attuale e lo proiettiamo fino all età pensionabile applicando una crescita reale dell 1,5% annuo — in linea con la media storica dei salari italiani. Sul reddito futuro calcoliamo il netto applicando le aliquote IRPEF 2024 reali e i contributi INPS a carico del lavoratore (9,19%).</p>
+            <p style="font-size:0.75rem; color:var(--text-light); line-height:1.7; margin-bottom:8px;"><strong style="color:var(--cream);">Pensione stimata</strong><br>Utilizziamo i tassi di sostituzione medi del sistema contributivo puro INPS — il sistema che si applica a chi ha iniziato a lavorare dopo il 1995. Questi tassi variano dal 42% per chi ha pochi anni di contribuzione fino al 75% per chi arriva a 40+ anni. La pensione viene calcolata sull ultimo stipendio netto stimato, non su quello attuale.</p>
+            <p style="font-size:0.75rem; color:var(--text-light); line-height:1.7; margin-bottom:0;"><strong style="color:var(--cream);">Importante</strong><br>Questa è una stima educativa semplificata. Il calcolo reale dipende dalla tua posizione contributiva INPS, dalle rivalutazioni annuali del montante e dai coefficienti di trasformazione che vengono aggiornati ogni due anni. Per una stima precisa consulta il tuo estratto conto INPS o parla con Dario.</p>
+          </div>
+        </div>
+
+        <div class="sim-cta">
+          <div class="sim-cta-text">Hai visto il tuo gap previdenziale?<br>Dario può aiutarti a costruire un piano su misura per colmarlo.</div>
+          <button class="sim-cta-btn" onclick="switchTab('chat'); setTimeout(() => sendQuick('Ho visto il simulatore pensionistico e vorrei capire come costruire un piano previdenziale'), 300)">Parla con Dario →</button>
+        </div>
+
+      </div>
+    </div>
+    <div class="disclaimer">⚠️ Simulazione a scopo educativo. Non costituisce consulenza previdenziale o finanziaria personalizzata.<br>🔒 I dati inseriti nel simulatore (età, reddito, anni di contribuzione) non vengono salvati né trasmessi — rimangono solo nel tuo browser.</div>
   </div>
 
   <!-- SIMULATOR PANEL -->
@@ -168,18 +305,18 @@
         </div>
         <div class="chart-wrap"><canvas id="pacChart"></canvas></div>
         <div class="sim-results">
-          <div class="sim-stat"><div class="sim-stat-label">Investito</div><div class="sim-stat-value gold" id="invested">€48.000</div></div>
-          <div class="sim-stat"><div class="sim-stat-label">Rendimento</div><div class="sim-stat-value green" id="gains">€44.143</div></div>
+          <div class="sim-stat"><div class="sim-stat-label">Capitale investito</div><div class="sim-stat-value gold" id="invested">€48.000</div></div>
+          <div class="sim-stat"><div class="sim-stat-label">Rendimento generato</div><div class="sim-stat-value green" id="gains">€44.143</div></div>
           <div class="sim-stat"><div class="sim-stat-label">Valore finale</div><div class="sim-stat-value green" id="total">€92.143</div></div>
         </div>
         <div class="sim-note">* Simulazione a scopo educativo. I rendimenti passati non garantiscono quelli futuri.</div>
         <div class="sim-cta">
-          <div class="sim-cta-text">Vuoi scoprire quanto puoi ottenere con la tua situazione specifica?<br>Dario ti offre una consulenza gratuita e senza impegno.</div>
-          <button class="sim-cta-btn" onclick="switchTab('chat'); setTimeout(() => sendQuick('Ho visto il simulatore PAC e vorrei capire come iniziare'), 300)">Parla con Dario — è gratuito →</button>
+          <div class="sim-cta-text">Vuoi scoprire quanto puoi ottenere con la tua situazione specifica?<br>Dario è disponibile per una chiacchierata — senza impegno.</div>
+          <button class="sim-cta-btn" onclick="switchTab('chat'); setTimeout(() => sendQuick('Ho visto il simulatore PAC e vorrei capire come iniziare'), 300)">Parla con Dario →</button>
         </div>
       </div>
     </div>
-    <div class="disclaimer">⚠️ Simulazione a scopo educativo. Non costituisce consulenza finanziaria personalizzata.</div>
+    <div class="disclaimer">⚠️ Simulazione a scopo educativo. Non costituisce consulenza finanziaria personalizzata.<br>🔒 I dati inseriti nel simulatore non vengono salvati né trasmessi — rimangono solo nel tuo browser.</div>
   </div>
 </div>
 
@@ -198,21 +335,26 @@
 
   const SYSTEM_PROMPT = `Sei l'assistente AI di Dario Acquafredda, consulente finanziario specializzato in finanza comportamentale, PAC, fondi pensione e pianificazione patrimoniale per giovani e persone che si avvicinano agli investimenti.
 
-Il tuo ruolo è ACQUISIRE NUOVI CLIENTI educandoli sull'importanza di investire:
+Il tuo ruolo è ACQUISIRE NUOVI CLIENTI educandoli sull'importanza di investire e portarli a fissare un incontro con Dario:
 1. Spiegare in modo semplice e motivante perché è importante investire, anche con piccole somme
 2. Educare su: inflazione, potere del tempo, interesse composto, PAC, diversificazione, fondi pensione
 3. Sfatare miti e paure comuni: "devo avere tanti soldi", "è troppo rischioso", "aspetto il momento giusto", "tengo tutto in banca"
 4. Usare la finanza comportamentale per spiegare i bias che frenano le persone
-5. Quando la persona mostra interesse concreto, chiede come iniziare, chiede di parlare con Dario o risponde positivamente all'invito soft, inizia la risposta con [ESCALATE]
+5. Quando la persona mostra interesse concreto, chiede come iniziare, chiede di fissare un appuntamento, chiede di parlare con Dario, vuole essere ricontattata o risponde positivamente all'invito soft, inizia IMMEDIATAMENTE la risposta con [ESCALATE] — senza eccezioni.
+
+REGOLA ASSOLUTA SUI CONTATTI: Non fornire MAI email, numeri di telefono, indirizzi o qualsiasi dato di contatto di Dario. Non inventare mai dati. L'unico modo per mettersi in contatto con Dario è attraverso il form che appare automaticamente quando usi [ESCALATE]. Se qualcuno chiede come contattare Dario, usa [ESCALATE] e basta.
 
 INVITO SOFT — REGOLA FONDAMENTALE:
-Dopo almeno 3 messaggi scambiati, se percepisci che la persona sta mostrando interesse genuino (fa domande specifiche, chiede approfondimenti, sembra coinvolta), inserisci in modo naturale alla fine della tua risposta una frase soft come questa: "Se vuoi approfondire la tua situazione specifica, Dario è disponibile per una chiacchierata gratuita — senza nessun impegno 😊" — NON usare [ESCALATE] per questo invito, è solo un suggerimento gentile nel testo. Usalo una volta, poi aspetta la reazione dell'utente. Se risponde positivamente, ALLORA usa [ESCALATE].
+Dopo almeno 3 messaggi scambiati, se percepisci interesse genuino (domande specifiche, coinvolgimento, curiosità), inserisci naturalmente alla fine della risposta: "Se vuoi approfondire la tua situazione specifica, Dario è disponibile per una chiacchierata — senza nessun impegno 😊" — NON usare [ESCALATE] per questo, è solo un invito gentile. Usalo una volta sola. Se risponde positivamente, ALLORA usa [ESCALATE]. Se non risponde o cambia argomento, dopo altri 2 messaggi riproponi l'invito in modo diverso, più diretto: "Vuoi che Dario ti contatti per capire insieme da dove partire? Bastano pochi minuti."
 
-SUL TEMA COSTI/ETF VS FONDI: Non entrare nel merito. Rispondi che dipende dalla situazione personale e che Dario può aiutare. Il messaggio centrale è: la cosa più importante è iniziare a investire.
+RENDIMENTI E PROMESSE — REGOLA ASSOLUTA:
+Non citare mai rendimenti specifici, percentuali di guadagno o proiezioni economiche precise come obiettivo raggiungibile. Mai frasi come "puoi guadagnare X%" o "otterrai Y euro". Il simulatore PAC è uno strumento educativo, non una promessa. Quando qualcuno chiede quanto può guadagnare, rispondi sempre che dipende dalla situazione personale, dal profilo di rischio, dall'orizzonte temporale e dagli strumenti scelti — e che è esattamente questo che Dario costruisce su misura con ogni cliente. Zero promesse, massima competenza.
 
-SIMULATORE PAC: Se qualcuno menziona il simulatore, commenta i risultati con entusiasmo e spiega il potere dell'interesse composto.
+SUL TEMA COSTI/ETF VS FONDI: Non entrare nel merito. Rispondi che dipende dalla situazione personale e che Dario può aiutare.
 
-Tono: amichevole, motivante, empatico, mai tecnico. Usa analogie quotidiane. Rispondi in italiano. Risposte concise (2-3 paragrafi max). Qualche emoji con moderazione.`;
+SIMULATORE PAC: Se qualcuno menziona il simulatore, commentalo come strumento educativo per capire il potere del tempo — non come previsione di rendimento.
+
+Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. Usa analogie quotidiane. Rispondi in italiano. Risposte concise (2-3 paragrafi max). Qualche emoji con moderazione.`;
 
   async function saveMessage(role, messaggio) {
     try {
@@ -234,19 +376,26 @@ Tono: amichevole, motivante, empatico, mai tecnico. Usa analogie quotidiane. Ris
   function switchTab(tab) {
     document.getElementById('panel-chat').classList.toggle('active', tab === 'chat');
     document.getElementById('panel-sim').classList.toggle('active', tab === 'sim');
+    document.getElementById('panel-pension').classList.toggle('active', tab === 'pension');
     document.getElementById('btn-chat').classList.toggle('active', tab === 'chat');
     document.getElementById('btn-sim').classList.toggle('active', tab === 'sim');
+    document.getElementById('btn-pension').classList.toggle('active', tab === 'pension');
     if (tab === 'sim' && !pacChart) updateSim();
+    if (tab === 'pension') updatePension();
   }
 
   function formatEuro(n) { return '€' + Math.round(n).toLocaleString('it-IT'); }
 
   function calcPAC(monthly, years, rate) {
+    // Metodologia Banca d'Italia: versamenti a fine periodo, capitalizzazione mensile
     const r = rate / 100 / 12;
     const n = years * 12;
-    const fv = monthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+    // Interesse composto (capitalizzazione mensile, versamenti fine periodo)
+    const fvCompound = monthly * ((Math.pow(1 + r, n) - 1) / r);
+    // Interesse semplice (rendimento applicato solo al capitale, non agli interessi)
+    const fvSimple = monthly * n * (1 + rate / 100 * years / 2);
     const invested = monthly * n;
-    return { fv, invested, gains: fv - invested };
+    return { fv: fvCompound, fvSimple, invested, gains: fvCompound - invested, gainsSimple: fvSimple - invested };
   }
 
   function updateSim() {
@@ -256,16 +405,17 @@ Tono: amichevole, motivante, empatico, mai tecnico. Usa analogie quotidiane. Ris
     document.getElementById('monthly-val').textContent = '€' + monthly + '/mese';
     document.getElementById('years-val').textContent = years + ' anni';
     document.getElementById('rate-val').textContent = rate + '% annuo';
-    const { fv, invested, gains } = calcPAC(monthly, years, rate);
+    const { fv, fvSimple, invested, gains } = calcPAC(monthly, years, rate);
     document.getElementById('invested').textContent = formatEuro(invested);
     document.getElementById('gains').textContent = formatEuro(gains);
     document.getElementById('total').textContent = formatEuro(fv);
-    const labels = [], investedData = [], totalData = [];
+    const labels = [], investedData = [], totalData = [], simpleData = [];
     for (let y = 1; y <= years; y++) {
       labels.push('Anno ' + y);
       const res = calcPAC(monthly, y, rate);
       investedData.push(Math.round(res.invested));
       totalData.push(Math.round(res.fv));
+      simpleData.push(Math.round(res.fvSimple));
     }
     if (pacChart) {
       pacChart.data.labels = labels;
@@ -322,7 +472,11 @@ Tono: amichevole, motivante, empatico, mai tecnico. Usa analogie quotidiane. Ris
         <div class="contact-form-title">📬 Lascia i tuoi contatti — Dario ti richiamerà gratuitamente</div>
         <input type="text" placeholder="Il tuo nome e cognome" id="cf-name" />
         <input type="tel" placeholder="Il tuo numero di telefono" id="cf-phone" />
-        <button class="contact-submit" onclick="submitContact()">Inizia il tuo percorso con Dario — è gratuito →</button>`;
+        <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;">
+          <input type="checkbox" id="cf-privacy" style="margin-top:3px; flex-shrink:0; accent-color:var(--green); width:16px; height:16px; cursor:pointer;">
+          <label for="cf-privacy" style="font-size:0.72rem; color:var(--text-light); line-height:1.5; cursor:pointer;">Acconsento al trattamento dei miei dati personali (nome e telefono) da parte di <strong style="color:var(--cream);">Dario Acquafredda</strong>, titolare del trattamento, per essere ricontattato ai fini di una consulenza finanziaria. I dati saranno conservati per un massimo di 12 mesi e non ceduti a terzi. Puoi richiedere la cancellazione in qualsiasi momento scrivendo a darioacquafredda@gmail.com.</label>
+        </div>
+        <button class="contact-submit" onclick="submitContact()">Inizia il tuo percorso con Dario →</button>`;
       messages.appendChild(formDiv);
     }
     messages.scrollTop = messages.scrollHeight;
@@ -342,7 +496,9 @@ Tono: amichevole, motivante, empatico, mai tecnico. Usa analogie quotidiane. Ris
   async function submitContact() {
     const name = document.getElementById('cf-name')?.value?.trim();
     const phone = document.getElementById('cf-phone')?.value?.trim();
+    const privacy = document.getElementById('cf-privacy')?.checked;
     if (!name || !phone) { alert('Per favore inserisci nome e numero di telefono.'); return; }
+    if (!privacy) { alert('Per procedere è necessario accettare il consenso al trattamento dei dati personali.'); return; }
 
     contactName = name;
     contactPhone = phone;
@@ -408,6 +564,186 @@ Tono: amichevole, motivante, empatico, mai tecnico. Usa analogie quotidiane. Ris
       addMessage('assistant', 'Si è verificato un errore di connessione. Riprova tra qualche istante.');
     }
     isLoading = false; document.getElementById('send-btn').disabled = false; input.focus();
+  }
+
+  function updatePension() {
+    const age = parseInt(document.getElementById('p-age').value);
+    const contrib = parseInt(document.getElementById('p-contrib').value);
+    const retAge = parseInt(document.getElementById('p-ret').value);
+    const grossIncome = parseInt(document.getElementById('p-income').value);
+
+    document.getElementById('p-age-val').textContent = age + ' anni';
+    document.getElementById('p-contrib-val').textContent = contrib + ' anni';
+    document.getElementById('p-ret-val').textContent = retAge + ' anni';
+    document.getElementById('p-income-val').textContent = '€' + grossIncome.toLocaleString('it-IT');
+
+    const yearsLeft = Math.max(1, retAge - age);
+    const totalContrib = contrib + yearsLeft;
+
+    // Calcolo netto con IRPEF reale italiana
+    function calcNetMonthly(grossAnnual) {
+      let irpef = 0;
+      if (grossAnnual <= 28000) irpef = grossAnnual * 0.23;
+      else if (grossAnnual <= 50000) irpef = 28000 * 0.23 + (grossAnnual - 28000) * 0.35;
+      else irpef = 28000 * 0.23 + 22000 * 0.35 + (grossAnnual - 50000) * 0.43;
+      let detrazione = 0;
+      if (grossAnnual <= 15000) detrazione = 1955;
+      else if (grossAnnual <= 28000) detrazione = 1910 + 1190 * (28000 - grossAnnual) / 13000;
+      else if (grossAnnual <= 50000) detrazione = 1910 * (50000 - grossAnnual) / 22000;
+      const irpefNetto = Math.max(0, irpef - detrazione);
+      const inps = grossAnnual * 0.0919;
+      return Math.round((grossAnnual - irpefNetto - inps) / 12);
+    }
+
+    // Tasso di sostituzione realistico INPS per sistema contributivo puro
+    function realisticRate(totalYears) {
+      if (totalYears < 15) return 0.42;
+      else if (totalYears < 20) return 0.48;
+      else if (totalYears < 25) return 0.54;
+      else if (totalYears < 30) return 0.60;
+      else if (totalYears < 35) return 0.65;
+      else if (totalYears < 40) return 0.70;
+      else return 0.75;
+    }
+
+    // Reddito attuale e futuro
+    const futureGrossIncome = grossIncome * Math.pow(1.015, yearsLeft);
+    const currentNetMonthly = calcNetMonthly(grossIncome);
+    const lastNetMonthly = calcNetMonthly(futureGrossIncome);
+
+    // Pensione = tasso di sostituzione realistico applicato all'ULTIMO stipendio netto
+    const rate = realisticRate(totalContrib);
+    const monthlyPension = Math.round(lastNetMonthly * rate);
+    const displayGap = Math.max(0, lastNetMonthly - monthlyPension);
+    const cappedRate = Math.round(rate * 100);
+
+    document.getElementById('p-net').textContent = '€' + lastNetMonthly.toLocaleString('it-IT') + '/mese';
+    document.getElementById('p-pension').textContent = '€' + monthlyPension.toLocaleString('it-IT') + '/mese';
+    document.getElementById('p-gap').textContent = '-€' + displayGap.toLocaleString('it-IT') + '/mese';
+    document.getElementById('p-gap').style.color = '#e05c5c';
+
+    document.getElementById('p-years-left').textContent = yearsLeft + ' anni';
+    currentGap = displayGap;
+    currentYearsLeft = yearsLeft;
+    document.getElementById('p-gap-total').textContent = '-€' + displayGap.toLocaleString('it-IT') + '/mese';
+    // Reset slider display
+    const sliderVal = parseInt(document.getElementById('p-contribution-slider').value);
+    document.getElementById('p-slider-val').textContent = '€' + sliderVal + '/mese';
+    updatePensionSlider();
+
+    // PAC suggerito per colmare il gap
+    const gapToFill = displayGap > 0 ? displayGap : Math.round(futureNetMonthly * 0.35);
+    const r = 0.05 / 12;
+    const n = yearsLeft * 12;
+    const targetCapital = gapToFill * 12 / 0.04;
+    const pacSuggested = Math.max(50, Math.round(targetCapital / (((Math.pow(1 + r, n) - 1) / r) * (1 + r))));
+    document.getElementById('p-pac').textContent = '€' + pacSuggested.toLocaleString('it-IT') + '/mese';
+    document.getElementById('p-note').textContent = 'Il sistema contributivo italiano produce per i giovani di oggi un tasso di sostituzione reale del 50-65% — significa che la pensione coprirà meno di 2/3 del tuo ultimo stipendio. Prima inizi a costruire un piano integrativo, minore sarà lo sforzo mensile necessario.';
+  }
+
+  let currentGap = 0;
+  let currentYearsLeft = 0;
+
+  function toggleMethod() {
+    const box = document.getElementById('method-box');
+    const arrow = document.getElementById('method-arrow');
+    if (box.style.display === 'none') {
+      box.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      box.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function updatePensionSlider() {
+    const contribution = parseInt(document.getElementById('p-contribution-slider').value);
+    document.getElementById('p-slider-val').textContent = '€' + contribution + '/mese';
+
+    if (currentGap <= 0 || currentYearsLeft <= 0) return;
+
+    // Calcola quanto reddito integrativo genera il versamento mensile al pensionamento
+    const r = 0.05 / 12;
+    const n = currentYearsLeft * 12;
+    const fv = contribution * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+    const monthlyIncome = Math.round(fv * 0.04 / 12); // 4% withdrawal rate
+
+    const coveredPct = Math.min(100, Math.round((monthlyIncome / currentGap) * 100));
+    const residual = Math.max(0, currentGap - monthlyIncome);
+
+    document.getElementById('p-covered-pct').textContent = coveredPct + '%';
+    document.getElementById('p-covered-bar').style.width = coveredPct + '%';
+    document.getElementById('p-covered-bar').style.background = coveredPct >= 80
+      ? 'linear-gradient(90deg, #2ecc8f, #25a876)'
+      : coveredPct >= 40
+      ? 'linear-gradient(90deg, #c9a84c, #e8c97a)'
+      : 'linear-gradient(90deg, #e05c5c, #c9a84c)';
+
+    document.getElementById('p-gap-total').textContent = '-€' + currentGap.toLocaleString('it-IT') + '/mese';
+    document.getElementById('p-gap-covered').textContent = '+€' + monthlyIncome.toLocaleString('it-IT') + '/mese';
+    document.getElementById('p-gap-residual').textContent = residual > 0 ? '-€' + residual.toLocaleString('it-IT') + '/mese' : '✅ Colmato';
+    document.getElementById('p-gap-residual').style.color = residual > 0 ? '#e05c5c' : '#2ecc8f';
+
+    if (coveredPct >= 100) {
+      document.getElementById('p-note').textContent = '🎉 Con questo versamento stai coprendo interamente il gap previdenziale. Ottimo piano!';
+    } else if (coveredPct >= 60) {
+      document.getElementById('p-note').textContent = 'Stai coprendo buona parte del gap. Parla con Dario per ottimizzare gli strumenti e massimizzare l efficienza fiscale del tuo piano.';
+    } else {
+      document.getElementById('p-note').textContent = 'Il sistema contributivo italiano produce per i giovani un tasso di sostituzione reale del 50-65%. Prima inizi, minore sarà lo sforzo mensile necessario.';
+    }
+  }
+
+  updatePension();
+</script>
+
+<!-- FAB BUTTON + FLOATING FORM -->
+<div id="fab-form" style="display:none; position:fixed; bottom:90px; right:20px; z-index:999; width:300px; background:var(--navy-mid); border:1px solid rgba(46,204,143,0.3); border-radius:16px; padding:18px; box-shadow:0 8px 32px rgba(0,0,0,0.4); animation:fadeUp 0.3s ease;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+    <div style="font-size:0.78rem; font-weight:600; color:var(--green); letter-spacing:0.05em; text-transform:uppercase;">📅 Fissa un appuntamento</div>
+    <button onclick="closeFab()" style="background:none; border:none; color:var(--text-light); cursor:pointer; font-size:18px; line-height:1; padding:0;">×</button>
+  </div>
+  <input type="text" id="fab-name" placeholder="Il tuo nome e cognome" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); border-radius:9px; padding:9px 13px; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:0.82rem; outline:none; margin-bottom:8px; box-sizing:border-box;">
+  <input type="tel" id="fab-phone" placeholder="Il tuo numero di telefono" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); border-radius:9px; padding:9px 13px; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:0.82rem; outline:none; margin-bottom:10px; box-sizing:border-box;">
+  <div style="display:flex; align-items:flex-start; gap:8px; margin-bottom:12px;">
+    <input type="checkbox" id="fab-privacy" style="margin-top:3px; flex-shrink:0; accent-color:var(--green); width:15px; height:15px; cursor:pointer;">
+    <label for="fab-privacy" style="font-size:0.7rem; color:var(--text-light); line-height:1.5; cursor:pointer;">Acconsento al trattamento dei miei dati personali per essere ricontattato da Dario Acquafredda ai sensi del GDPR.</label>
+  </div>
+  <button onclick="submitFab()" style="background:linear-gradient(135deg,var(--green),var(--green-dark)); border:none; border-radius:9px; padding:11px 18px; color:var(--navy); font-family:'DM Sans',sans-serif; font-size:0.83rem; font-weight:600; cursor:pointer; width:100%; transition:all 0.2s ease;">Richiedi appuntamento →</button>
+</div>
+
+<button id="fab-btn" onclick="toggleFab()" style="position:fixed; bottom:24px; right:20px; z-index:1000; background:linear-gradient(135deg,var(--green),var(--green-dark)); border:none; border-radius:50px; padding:14px 20px; color:var(--navy); font-family:'DM Sans',sans-serif; font-size:0.84rem; font-weight:700; cursor:pointer; box-shadow:0 4px 20px rgba(46,204,143,0.4); display:flex; align-items:center; gap:8px; transition:all 0.2s ease;">
+  <span style="font-size:16px;">📅</span> Fissa appuntamento
+</button>
+
+<script>
+  function toggleFab() {
+    const form = document.getElementById('fab-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  }
+  function closeFab() {
+    document.getElementById('fab-form').style.display = 'none';
+  }
+  async function submitFab() {
+    const name = document.getElementById('fab-name').value.trim();
+    const phone = document.getElementById('fab-phone').value.trim();
+    const privacy = document.getElementById('fab-privacy').checked;
+    if (!name || !phone) { alert('Per favore inserisci nome e numero di telefono.'); return; }
+    if (!privacy) { alert('Per procedere è necessario accettare il consenso al trattamento dei dati personali.'); return; }
+    const now = new Date().toLocaleString('it-IT');
+    try {
+      await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'save_message', session_id: sessionId, role: 'user', messaggio: '[RICHIESTA APPUNTAMENTO DIRETTO]', nome: name, telefono: phone })
+      });
+      await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'contact', name, phone, mode: 'prospect', timestamp: now, messageCount: 0 })
+      });
+    } catch(e) { console.log('FAB error', e); }
+    document.getElementById('fab-form').innerHTML = '<div style="text-align:center; padding:16px 0;"><div style="font-size:1.6rem; margin-bottom:8px;">✅</div><div style="color:var(--green); font-weight:600; font-size:0.9rem; margin-bottom:4px;">Richiesta inviata!</div><div style="color:var(--text-light); font-size:0.76rem; line-height:1.5;">Dario ti contatterà presto al numero indicato.</div></div>';
+    setTimeout(() => { document.getElementById('fab-form').style.display = 'none'; }, 3000);
   }
 </script>
 </body>
