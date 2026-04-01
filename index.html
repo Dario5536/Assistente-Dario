@@ -109,10 +109,42 @@
 </div>
 
 <div class="main">
-  <div class="tab-toggle">
-    <button class="tab-btn active" onclick="switchTab('chat')" id="btn-chat">💬 Chatta</button>
-    <button class="tab-btn" onclick="switchTab('sim')" id="btn-sim">📈 PAC</button>
-    <button class="tab-btn" onclick="switchTab('pension')" id="btn-pension">🏖️ Pensione</button>
+  <!-- HOME SCREEN -->
+  <div id="home-screen">
+    <div style="padding:28px 4px 8px; text-align:center;">
+      <div style="font-size:0.65rem; color:var(--text-light); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px;">Benvenuto</div>
+      <div style="font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--cream); line-height:1.15; margin-bottom:10px;">Come posso<br>aiutarti?</div>
+      <div style="font-size:0.82rem; color:var(--text-light);">Seleziona una sezione per iniziare</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+      <div onclick="switchTab('chat')" style="background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.25); border-radius:18px; padding:20px 10px 16px; text-align:center; cursor:pointer; transition:all 0.2s ease;" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.08)'">
+        <div style="font-size:34px; margin-bottom:10px; line-height:1;">💬</div>
+        <div style="font-size:0.72rem; font-weight:600; color:#e8c97a; line-height:1.4;">Chatta<br>con me</div>
+      </div>
+      <div onclick="switchTab('sim')" style="background:rgba(46,204,143,0.07); border:1px solid rgba(46,204,143,0.22); border-radius:18px; padding:20px 10px 16px; text-align:center; cursor:pointer; transition:all 0.2s ease;" onmouseover="this.style.background='rgba(46,204,143,0.14)'" onmouseout="this.style.background='rgba(46,204,143,0.07)'">
+        <div style="font-size:34px; margin-bottom:10px; line-height:1;">📈</div>
+        <div style="font-size:0.72rem; font-weight:600; color:#2ecc8f; line-height:1.4;">Simulatore<br>PAC</div>
+      </div>
+      <div onclick="switchTab('pension')" style="background:rgba(100,160,255,0.07); border:1px solid rgba(100,160,255,0.2); border-radius:18px; padding:20px 10px 16px; text-align:center; cursor:pointer; transition:all 0.2s ease;" onmouseover="this.style.background='rgba(100,160,255,0.14)'" onmouseout="this.style.background='rgba(100,160,255,0.07)'">
+        <div style="font-size:34px; margin-bottom:10px; line-height:1;">⏳</div>
+        <div style="font-size:0.72rem; font-weight:600; color:#7ab4f5; line-height:1.4;">Simulatore<br>Pensione</div>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;">
+      <div style="font-size:0.65rem; color:var(--text-light); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Domande frequenti</div>
+      <div style="display:flex; flex-wrap:wrap; gap:7px;">
+        <div class="topic-chip" onclick="switchTab('chat'); setTimeout(() => sendQuick('Perché dovrei investire se ho pochi risparmi?'), 200)">💰 Ho pochi risparmi</div>
+        <div class="topic-chip" onclick="switchTab('chat'); setTimeout(() => sendQuick('Ho paura di perdere i miei soldi investendo'), 200)">😟 Ho paura di perdere</div>
+        <div class="topic-chip" onclick="switchTab('chat'); setTimeout(() => sendQuick('Cos'è un PAC e come funziona?'), 200)">📅 Cos'è un PAC?</div>
+        <div class="topic-chip" onclick="switchTab('chat'); setTimeout(() => sendQuick('Cosa succede ai miei risparmi fermi in banca?'), 200)">🏦 Risparmi in banca</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACK BAR (visible when inside a section) -->
+  <div id="back-bar" style="display:none; align-items:center; gap:10px; margin-bottom:4px;">
+    <button onclick="goHome()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); border-radius:50px; padding:7px 14px; color:var(--text-light); font-family:'DM Sans',sans-serif; font-size:0.78rem; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;">← Torna al menu</button>
+    <span style="font-size:0.8rem; color:var(--cream); font-weight:500;" id="back-bar-title"></span>
   </div>
 
   <!-- CHAT PANEL -->
@@ -374,14 +406,23 @@ Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. U
   }
 
   function switchTab(tab) {
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById('back-bar').style.display = 'flex';
+    const titles = { chat: '💬 Chatta con me', sim: '📈 Simulatore PAC', pension: '⏳ Simulatore Pensione' };
+    document.getElementById('back-bar-title').textContent = titles[tab] || '';
     document.getElementById('panel-chat').classList.toggle('active', tab === 'chat');
     document.getElementById('panel-sim').classList.toggle('active', tab === 'sim');
     document.getElementById('panel-pension').classList.toggle('active', tab === 'pension');
-    document.getElementById('btn-chat').classList.toggle('active', tab === 'chat');
-    document.getElementById('btn-sim').classList.toggle('active', tab === 'sim');
-    document.getElementById('btn-pension').classList.toggle('active', tab === 'pension');
     if (tab === 'sim' && !pacChart) updateSim();
     if (tab === 'pension') updatePension();
+  }
+
+  function goHome() {
+    document.getElementById('home-screen').style.display = 'block';
+    document.getElementById('back-bar').style.display = 'none';
+    document.getElementById('panel-chat').classList.remove('active');
+    document.getElementById('panel-sim').classList.remove('active');
+    document.getElementById('panel-pension').classList.remove('active');
   }
 
   function formatEuro(n) { return '€' + Math.round(n).toLocaleString('it-IT'); }
