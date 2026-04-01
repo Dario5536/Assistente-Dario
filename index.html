@@ -374,7 +374,7 @@ Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. U
 
   async function saveMessage(role, messaggio) {
     try {
-      await fetch('/.netlify/functions/chat', {
+      await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -531,7 +531,7 @@ Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. U
 
     // Aggiorna tutti i record della sessione con nome e telefono
     try {
-      await fetch('/.netlify/functions/chat', {
+      await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'update_contact', session_id: sessionId, nome: name, telefono: phone })
@@ -540,7 +540,7 @@ Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. U
 
     // Invia email
     try {
-      await fetch('/.netlify/functions/chat', {
+      await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'contact', name, phone, mode: 'prospect', timestamp: now, messageCount })
@@ -568,7 +568,7 @@ Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. U
 
     addTyping();
     try {
-      const response = await fetch('/.netlify/functions/chat', {
+      const response = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYSTEM_PROMPT, messages: conversationHistory })
@@ -756,12 +756,12 @@ Tono: amichevole, motivante, empatico, mai tecnico. Competenza senza promesse. U
     if (!privacy) { alert('Per procedere è necessario accettare il consenso al trattamento dei dati personali.'); return; }
     const now = new Date().toLocaleString('it-IT');
     try {
-      await fetch('/.netlify/functions/chat', {
+      await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'save_message', session_id: sessionId, role: 'user', messaggio: '[RICHIESTA APPUNTAMENTO DIRETTO]', nome: name, telefono: phone })
       });
-      await fetch('/.netlify/functions/chat', {
+      await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'contact', name, phone, mode: 'prospect', timestamp: now, messageCount: 0 })
